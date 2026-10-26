@@ -3,6 +3,7 @@ import { GalleryPlugin } from "@photo-sphere-viewer/gallery-plugin";
 import { GyroscopePlugin } from "@photo-sphere-viewer/gyroscope-plugin";
 import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
 import { nodosTour, opcionesVisor, textosVisor, ZOOM_MINIMO, mantenerZoomMinimo, vistaInicial } from "./ambientes.js";
+import { registrarEvento } from "./analitica.js";
 import { activarGiroscopioMovil, configGiroscopio } from "./giroscopio.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -132,6 +133,10 @@ const tour = visor.getPlugin(VirtualTourPlugin);
 
 tour.addEventListener("node-changed", ({ node, data }) => {
   nombreAmbiente.textContent = node.name;
+  registrarEvento("view_item", {
+    item_id: node.id,
+    item_name: node.name,
+  });
   if (!data?.fromLink) {
     const vista = vistaInicial(nodosTour.find((item) => item.id === node.id) || node);
     if (vista) visor.rotate(vista);

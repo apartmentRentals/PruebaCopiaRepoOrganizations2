@@ -1,6 +1,7 @@
 import { Viewer } from "@photo-sphere-viewer/core";
 import { GyroscopePlugin } from "@photo-sphere-viewer/gyroscope-plugin";
 import { ambientes, opcionesVisor, textosVisor, ZOOM_MINIMO, mantenerZoomMinimo, vistaInicial } from "./ambientes.js";
+import { registrarEvento } from "./analitica.js";
 import { activarGiroscopioMovil, configGiroscopio, pedirPermisoMovimiento, ocultarAvisoGiroscopio } from "./giroscopio.js";
 
 const lista = document.getElementById("lista-galeria");
@@ -43,6 +44,11 @@ function abrirVisor(id) {
   ambienteAbierto = ambiente;
   ultimoFoco = document.activeElement;
   titulo.textContent = ambiente.titulo;
+  registrarEvento("select_content", {
+    content_type: "ambiente",
+    item_id: ambiente.id,
+    item_name: ambiente.titulo,
+  });
   modal.hidden = false;
   document.body.style.overflow = "hidden";
   botonCerrar.focus();
