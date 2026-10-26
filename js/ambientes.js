@@ -19,6 +19,7 @@ export const ambientes = [
     descripcion: "Cocina con estufa, mesón y ventana al costado.",
     imagen: "imagenes/cocina.jpg",
     miniatura: "imagenes/miniaturas/cocina.jpg",
+    yawInicial: "-90deg",
   },
   {
     id: "habitacion-principal",
@@ -56,6 +57,7 @@ export const nodosTour = [
     caption: "Cocina",
     panorama: "imagenes/cocina.jpg",
     thumbnail: "imagenes/miniaturas/cocina.jpg",
+    yawInicial: "-180deg",
     links: [{ nodeId: "sala-cocina", position: { yaw: "145.4deg", pitch: "-32.6deg" } }],
   },
   {
@@ -80,6 +82,12 @@ export function mantenerZoomMinimo(visor) {
   visor.addEventListener("panorama-loaded", () => {
     queueMicrotask(() => visor.zoom(ZOOM_MINIMO));
   });
+}
+
+/** Vista al abrir un ambiente. yawInicial negativo = giro contrario a las manecillas. */
+export function vistaInicial(item) {
+  if (!item?.yawInicial) return undefined;
+  return { yaw: item.yawInicial, pitch: item.pitchInicial ?? 0 };
 }
 
 export const textosVisor = {

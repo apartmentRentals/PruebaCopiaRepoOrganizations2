@@ -1,6 +1,6 @@
 import { Viewer } from "@photo-sphere-viewer/core";
 import { GyroscopePlugin } from "@photo-sphere-viewer/gyroscope-plugin";
-import { ambientes, opcionesVisor, textosVisor, ZOOM_MINIMO, mantenerZoomMinimo } from "./ambientes.js";
+import { ambientes, opcionesVisor, textosVisor, ZOOM_MINIMO, mantenerZoomMinimo, vistaInicial } from "./ambientes.js";
 import { activarGiroscopioMovil, configGiroscopio, pedirPermisoMovimiento, ocultarAvisoGiroscopio } from "./giroscopio.js";
 
 const lista = document.getElementById("lista-galeria");
@@ -11,6 +11,7 @@ const botonCerrar = document.getElementById("visor-cerrar");
 
 let visor = null;
 let ultimoFoco = null;
+let ambienteAbierto = null;
 
 function pintarTarjetas() {
   const fragmento = document.createDocumentFragment();
@@ -39,6 +40,7 @@ function abrirVisor(id) {
   const ambiente = ambientes.find((item) => item.id === id);
   if (!ambiente) return;
 
+  ambienteAbierto = ambiente;
   ultimoFoco = document.activeElement;
   titulo.textContent = ambiente.titulo;
   modal.hidden = false;
@@ -46,8 +48,10 @@ function abrirVisor(id) {
   botonCerrar.focus();
   pedirPermisoMovimiento();
 
+  const vista = vistaInicial(ambiente);
+
   if (visor) {
-    visor.setPanorama(ambiente.imagen, { caption: ambiente.titulo, zoom: ZOOM_MINIMO });
+    visor.setPanorama(ambiente.imagen, { caption: ambiente.titulo, zoom: ZOOM_MINIMO, position: vista });
     activarGiroscopioMovil(visor);
     return;
   }
@@ -60,9 +64,15 @@ function abrirVisor(id) {
     navbar: ["zoom", "move", "caption", "gyroscope", "fullscreen"],
     lang: textosVisor,
     ...opcionesVisor,
+    defaultYaw: ambiente.yawInicial ?? 0,
+    defaultPitch: ambiente.pitchInicial ?? 0,
     plugins: [GyroscopePlugin.withConfig(configGiroscopio)],
   });
   mantenerZoomMinimo(visor);
+  visor.addEventListener("panorama-loaded", () => {
+    const inicial = vistaInicial(ambienteAbierto);
+    if (inicial) queueMicrotask(() => visor.rotate(inicial));
+  });
   visor.addEventListener("ready", () => activarGiroscopioMovil(visor), { once: true });
 }
 

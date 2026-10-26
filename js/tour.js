@@ -2,7 +2,7 @@ import { Viewer } from "@photo-sphere-viewer/core";
 import { GalleryPlugin } from "@photo-sphere-viewer/gallery-plugin";
 import { GyroscopePlugin } from "@photo-sphere-viewer/gyroscope-plugin";
 import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
-import { nodosTour, opcionesVisor, textosVisor, ZOOM_MINIMO, mantenerZoomMinimo } from "./ambientes.js";
+import { nodosTour, opcionesVisor, textosVisor, ZOOM_MINIMO, mantenerZoomMinimo, vistaInicial } from "./ambientes.js";
 import { activarGiroscopioMovil, configGiroscopio } from "./giroscopio.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -83,6 +83,8 @@ function activarCalibracion(visor, tour) {
   pintarVista();
 }
 
+const nodoInicio = nodosTour.find((nodo) => nodo.id === (existe ? inicio : "sala-cocina"));
+
 const visor = new Viewer({
   container: "tour",
   loadingTxt: "Cargando recorrido…",
@@ -90,6 +92,8 @@ const visor = new Viewer({
   navbar: ["zoom", "move", "caption", "gallery", "gyroscope", "fullscreen"],
   lang: textosVisor,
   ...opcionesVisor,
+  defaultYaw: nodoInicio?.yawInicial ?? 0,
+  defaultPitch: nodoInicio?.pitchInicial ?? 0,
   plugins: [
     GyroscopePlugin.withConfig(configGiroscopio),
     GalleryPlugin.withConfig({
@@ -106,12 +110,16 @@ const visor = new Viewer({
       },
       startNodeId: existe ? inicio : "sala-cocina",
       preload: true,
-      transitionOptions: {
-        showLoader: true,
-        speed: "20rpm",
-        effect: "fade",
-        rotation: true,
-        zoomTo: ZOOM_MINIMO,
+      transitionOptions: (nodo, _desde, enlace) => {
+        const vista = enlace ? undefined : vistaInicial(nodosTour.find((item) => item.id === nodo.id) || nodo);
+        return {
+          showLoader: true,
+          speed: "20rpm",
+          effect: "fade",
+          rotation: Boolean(enlace),
+          zoomTo: ZOOM_MINIMO,
+          ...(vista ? { rotateTo: vista } : {}),
+        };
       },
       nodes: nodosTour,
     }),
@@ -122,8 +130,12 @@ mantenerZoomMinimo(visor);
 
 const tour = visor.getPlugin(VirtualTourPlugin);
 
-tour.addEventListener("node-changed", ({ node }) => {
+tour.addEventListener("node-changed", ({ node, data }) => {
   nombreAmbiente.textContent = node.name;
+  if (!data?.fromLink) {
+    const vista = vistaInicial(nodosTour.find((item) => item.id === node.id) || node);
+    if (vista) visor.rotate(vista);
+  }
 });
 
 if (depurar) {
@@ -134,6 +146,8 @@ visor.addEventListener("ready", () => {
   const actual = tour.getCurrentNode();
   if (actual) {
     nombreAmbiente.textContent = actual.name;
+    const vista = vistaInicial(nodosTour.find((item) => item.id === actual.id) || actual);
+    if (vista) visor.rotate(vista);
   }
   activarGiroscopioMovil(visor);
 });
