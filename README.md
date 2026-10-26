@@ -11,7 +11,28 @@ No usa servidor, base de datos ni Node. Son HTML, CSS y JavaScript. El visor es 
 3. Python 3, solo para probar en local (Mac ya lo trae).
 4. Un recortador de imágenes: [Squoosh](https://squoosh.app/) o Vista Previa de Mac.
 
-No hace falta instalar Node.js.
+No hace falta instalar Node.js. Si lo tienes, `package.json` guarda los comandos útiles (`npm start`, `npm run https`, `npm run debug`). No hace falta `npm install`.
+
+## Scripts
+
+Están en `package.json`. Desde la carpeta del proyecto:
+
+| Comando | Qué hace |
+| --- | --- |
+| `npm start` | Sirve la galería y el recorrido en [http://localhost:8080](http://localhost:8080). |
+| `npm run https` | Sirve en HTTPS (`https://localhost:8443`) para probar el giroscopio en el celular. |
+| `npm run debug` | Abre el recorrido con el panel para calibrar las flechas (`tour.html?debug`). |
+| `npm run help` | Lista estos comandos. |
+
+Sin Node, el equivalente es:
+
+```bash
+python3 -m http.server 8080
+python3 servidor-https.py
+python3 ver-debug.py
+```
+
+Los archivos `servidor-https.py` y `ver-debug.py` son los scripts de Python que usan esos comandos.
 
 ## Preparar tus fotos 360
 
@@ -49,13 +70,23 @@ En las fotos de ejemplo (desde la sala-cocina, mirando al frente):
 
 No abras el HTML con doble clic. El visor necesita un servidor simple:
 
-Desde la carpeta del proyecto:
-
 ```bash
-python3 -m http.server 8080
+npm start
 ```
 
-Abre [http://localhost:8080](http://localhost:8080).
+Abre [http://localhost:8080](http://localhost:8080). Si no tienes Node: `python3 -m http.server 8080`.
+
+Giroscopio en el celular (misma red Wi‑Fi, acepta el aviso del certificado):
+
+```bash
+npm run https
+```
+
+Calibrar flechas del recorrido:
+
+```bash
+npm run debug
+```
 
 Prueba esto:
 
@@ -95,5 +126,9 @@ No subas originales de 20–40 MB. Si más adelante tienes muchas fotos pesadas,
 - `js/ambientes.js` — lista de cuartos y enlaces del tour
 - `js/galeria.js` — abre el visor al hacer clic en una tarjeta
 - `js/tour.js` — Photo Sphere Viewer + tour virtual
+- `js/giroscopio.js` — permiso y aviso del giroscopio en el celular
+- `package.json` — comandos `npm start`, `npm run https` y `npm run debug`
+- `servidor-https.py` — servidor HTTPS local (giroscopio)
+- `ver-debug.py` — servidor y recorrido con panel de calibración
 - `imagenes/` — JPEG 360
 - `imagenes/miniaturas/` — recortes chicos para las tarjetas

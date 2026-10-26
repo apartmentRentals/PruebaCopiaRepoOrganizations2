@@ -1,0 +1,11 @@
+{
+  "name": "view-apto",
+  "private": true,
+  "description": "Visor 360 de un apartamento. HTML, CSS y JavaScript. No hace falta npm install.",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "https": "python3 servidor-https.py",
+    "debug": "python3 ver-debug.py",
+    "help": "python3 -c \"print('\\nComandos de View-apto\\n\\n  npm start   galería y recorrido en http://localhost:8080\\n  npm run https   HTTPS en :8443 para el giroscopio del celular\\n  npm run debug   recorrido con panel para calibrar flechas\\n\\nSin Node, el equivalente es:\\n  python3 -m http.server 8080\\n  python3 servidor-https.py\\n  python3 ver-debug.py\\n')\""
+  }
+}
