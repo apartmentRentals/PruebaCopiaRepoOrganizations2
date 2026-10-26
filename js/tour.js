@@ -8,7 +8,6 @@ import { activarGiroscopioMovil, configGiroscopio } from "./giroscopio.js";
 const params = new URLSearchParams(window.location.search);
 const nombreAmbiente = document.getElementById("nombre-ambiente");
 const inicio = params.get("inicio") || "sala-cocina";
-const depurar = params.has("debug");
 const existe = nodosTour.some((nodo) => nodo.id === inicio);
 const TAMANO_FLECHA = { width: 18, height: 18 };
 
@@ -26,7 +25,6 @@ function activarCalibracion(visor, tour) {
   window.visor = visor;
   window.tour = tour;
 
-  /* Descomentar para ver el panel de calibración */
   const panel = document.createElement("aside");
   panel.className = "va-calibrar";
   panel.innerHTML = `
@@ -37,7 +35,7 @@ function activarCalibracion(visor, tour) {
     <button type="button" data-copiar>Copiar posición</button>
     <p class="va-calibrar-ayuda">Pega yaw y pitch en js/ambientes.js. El tamaño se cambia en TAMANO_FLECHA (js/tour.js). En consola: visor.getPosition()</p>
   `;
-  //document.body.appendChild(panel);
+  document.body.appendChild(panel);
 
   const nodoEl = panel.querySelector("[data-nodo]");
   const clicEl = panel.querySelector("[data-clic]");
@@ -51,8 +49,12 @@ function activarCalibracion(visor, tour) {
   }
 
   function pintarVista() {
-    const { yaw, pitch } = visor.getPosition();
-    vistaEl.textContent = snippetPosicion(aGrados(yaw), aGrados(pitch));
+    try {
+      const { yaw, pitch } = visor.getPosition();
+      vistaEl.textContent = snippetPosicion(aGrados(yaw), aGrados(pitch));
+    } catch {
+      /* el visor todavía está cargando la foto 360 */
+    }
   }
 
   visor.addEventListener("position-updated", pintarVista);
@@ -119,13 +121,12 @@ tour.addEventListener("node-changed", ({ node }) => {
   nombreAmbiente.textContent = node.name;
 });
 
+activarCalibracion(visor, tour);
+
 visor.addEventListener("ready", () => {
   const actual = tour.getCurrentNode();
   if (actual) {
     nombreAmbiente.textContent = actual.name;
-  }
-  if (depurar) {
-    activarCalibracion(visor, tour);
   }
   activarGiroscopioMovil(visor);
 });
