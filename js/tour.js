@@ -8,6 +8,7 @@ import { activarGiroscopioMovil, configGiroscopio } from "./giroscopio.js";
 const params = new URLSearchParams(window.location.search);
 const nombreAmbiente = document.getElementById("nombre-ambiente");
 const inicio = params.get("inicio") || "sala-cocina";
+const depurar = params.has("debug");
 const existe = nodosTour.some((nodo) => nodo.id === inicio);
 const TAMANO_FLECHA = { width: 18, height: 18 };
 
@@ -121,7 +122,9 @@ tour.addEventListener("node-changed", ({ node }) => {
   nombreAmbiente.textContent = node.name;
 });
 
-activarCalibracion(visor, tour);
+if (depurar) {
+  activarCalibracion(visor, tour);
+}
 
 visor.addEventListener("ready", () => {
   const actual = tour.getCurrentNode();

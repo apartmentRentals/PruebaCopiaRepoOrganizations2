@@ -14,11 +14,11 @@ export const ambientes = [
   //   miniatura: "imagenes/miniaturas/habitacion1.jpg",
   // },
   {
-    id: "habitacion2",
-    titulo: "Habitación 2",
-    descripcion: "Segunda habitación pequeña del pasillo, a la izquierda.",
-    imagen: "imagenes/habitacion2.jpg",
-    miniatura: "imagenes/miniaturas/habitacion2.jpg",
+    id: "cocina",
+    titulo: "Cocina",
+    descripcion: "Cocina con estufa, mesón y ventana al costado.",
+    imagen: "imagenes/cocina.jpg",
+    miniatura: "imagenes/miniaturas/cocina.jpg",
   },
   {
     id: "habitacion-principal",
@@ -55,7 +55,7 @@ export const nodosTour = [
     name: "Cocina",
     caption: "Cocina",
     panorama: "imagenes/cocina.jpg",
-    thumbnail: "imagenes/miniaturas/habitacion2.jpg",
+    thumbnail: "imagenes/miniaturas/cocina.jpg",
     links: [{ nodeId: "sala-cocina", position: { yaw: "145.4deg", pitch: "-32.6deg" } }],
   },
   {
