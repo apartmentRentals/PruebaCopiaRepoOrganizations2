@@ -2,7 +2,7 @@ import { Viewer } from "@photo-sphere-viewer/core";
 import { GalleryPlugin } from "@photo-sphere-viewer/gallery-plugin";
 import { GyroscopePlugin } from "@photo-sphere-viewer/gyroscope-plugin";
 import { VirtualTourPlugin } from "@photo-sphere-viewer/virtual-tour-plugin";
-import { nodosTour, textosVisor } from "./ambientes.js";
+import { nodosTour, opcionesVisor, textosVisor, ZOOM_MINIMO, mantenerZoomMinimo } from "./ambientes.js";
 import { activarGiroscopioMovil, configGiroscopio } from "./giroscopio.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -89,6 +89,7 @@ const visor = new Viewer({
   canvasBackground: "#111",
   navbar: ["zoom", "move", "caption", "gallery", "gyroscope", "fullscreen"],
   lang: textosVisor,
+  ...opcionesVisor,
   plugins: [
     GyroscopePlugin.withConfig(configGiroscopio),
     GalleryPlugin.withConfig({
@@ -110,11 +111,14 @@ const visor = new Viewer({
         speed: "20rpm",
         effect: "fade",
         rotation: true,
+        zoomTo: ZOOM_MINIMO,
       },
       nodes: nodosTour,
     }),
   ],
 });
+
+mantenerZoomMinimo(visor);
 
 const tour = visor.getPlugin(VirtualTourPlugin);
 

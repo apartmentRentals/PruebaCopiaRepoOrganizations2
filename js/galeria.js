@@ -1,6 +1,6 @@
 import { Viewer } from "@photo-sphere-viewer/core";
 import { GyroscopePlugin } from "@photo-sphere-viewer/gyroscope-plugin";
-import { ambientes, textosVisor } from "./ambientes.js";
+import { ambientes, opcionesVisor, textosVisor, ZOOM_MINIMO, mantenerZoomMinimo } from "./ambientes.js";
 import { activarGiroscopioMovil, configGiroscopio, pedirPermisoMovimiento, ocultarAvisoGiroscopio } from "./giroscopio.js";
 
 const lista = document.getElementById("lista-galeria");
@@ -47,7 +47,7 @@ function abrirVisor(id) {
   pedirPermisoMovimiento();
 
   if (visor) {
-    visor.setPanorama(ambiente.imagen, { caption: ambiente.titulo });
+    visor.setPanorama(ambiente.imagen, { caption: ambiente.titulo, zoom: ZOOM_MINIMO });
     activarGiroscopioMovil(visor);
     return;
   }
@@ -59,8 +59,10 @@ function abrirVisor(id) {
     loadingTxt: "Cargando imagen 360…",
     navbar: ["zoom", "move", "caption", "gyroscope", "fullscreen"],
     lang: textosVisor,
+    ...opcionesVisor,
     plugins: [GyroscopePlugin.withConfig(configGiroscopio)],
   });
+  mantenerZoomMinimo(visor);
   visor.addEventListener("ready", () => activarGiroscopioMovil(visor), { once: true });
 }
 

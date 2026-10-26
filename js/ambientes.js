@@ -68,6 +68,20 @@ export const nodosTour = [
   },
 ];
 
+/** 0 = máximo alejamiento (zoom mínimo del visor). */
+export const ZOOM_MINIMO = 0;
+
+export const opcionesVisor = {
+  defaultZoomLvl: ZOOM_MINIMO,
+};
+
+/** Las GoPro Max guardan FOV 0 en el XMP y Photo Sphere Viewer arranca en zoom máximo. */
+export function mantenerZoomMinimo(visor) {
+  visor.addEventListener("panorama-loaded", () => {
+    queueMicrotask(() => visor.zoom(ZOOM_MINIMO));
+  });
+}
+
 export const textosVisor = {
   zoom: "Zoom",
   zoomOut: "Alejar",
